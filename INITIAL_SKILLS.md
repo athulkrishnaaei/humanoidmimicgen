@@ -16,10 +16,12 @@ is hosted separately. Do not commit datasets, checkpoints, or company data to Gi
 ## Compute and storage
 
 The published training example was reproduced on an RTX 5090 with Python 3.10,
-CUDA 12.8, PyTorch 2.10, 20,000 updates, and batch size 16. A 24 GB GPU such as
-the AWS G5 A10G is a reasonable **trial**, not a verified minimum for this exact
-training job. Use `g5.2xlarge` as a starting configuration if available; it has
-one 24 GB GPU, 8 vCPUs, and 32 GiB system RAM. Check VRAM during a short run.
+CUDA 12.8, PyTorch 2.10, 20,000 updates, and batch size 16. For a full AWS
+run, start with [`g6e.2xlarge`](https://aws.amazon.com/ec2/instance-types/accelerated-computing/):
+one NVIDIA L40S GPU with 48 GB VRAM, 8 vCPUs, and 64 GiB system RAM. This is
+a capacity recommendation, not a verified performance result for this exact
+job. Check VRAM and throughput during a short run. A cheaper 24 GB G5 GPU may
+work, but its memory fit at batch size 16 is unverified.
 The RTX 4060 8 GB can be tried at batch size 1 or 2, but that is not the same
 training exposure as 20,000 updates at batch size 16. Out-of-memory is possible.
 
