@@ -269,12 +269,16 @@ def project_dataset(source: Path, output: Path) -> None:
         raise
 
 
-def prepare_released_task(task: str, data_dir: Path) -> tuple[Path, list[str]]:
-    """Download and prepare all eight public shards for one benchmark task."""
-    from huggingface_hub import snapshot_download
-
+def prepare_released_task(
+    task: str, data_dir: Path, offline_source_dir: Path | None = None
+) -> tuple[Path, list[str]]:
+    """Prepare all eight task shards from the Hub or a transferred local snapshot."""
     data_dir = data_dir.expanduser().resolve()
-    download_root = data_dir / "source"
+    download_root = (
+        offline_source_dir.expanduser().resolve()
+        if offline_source_dir is not None
+        else data_dir / "source"
+    )
     v3_root = data_dir / "v3"
     projected_root = data_dir / "projected"
     repo_ids = [f"local/hmg_{task}_shard_{index:03d}" for index in range(8)]
@@ -287,22 +291,26 @@ def prepare_released_task(task: str, data_dir: Path) -> tuple[Path, list[str]]:
             f"datasets/{task}/shard_{index:03d}/videos/**/{IMAGE_KEY}/**",
         )
     ]
-    snapshot_download(
-        repo_id=DATASET_REPOSITORY,
-        repo_type="dataset",
-        revision=DATASET_REVISION,
-        allow_patterns=allow_patterns,
-        local_dir=download_root,
-        max_workers=1,
-    )
+    if offline_source_dir is None:
+        from huggingface_hub import snapshot_download
+
+        snapshot_download(
+            repo_id=DATASET_REPOSITORY,
+            repo_type="dataset",
+            revision=DATASET_REVISION,
+            allow_patterns=allow_patterns,
+            local_dir=download_root,
+            max_workers=1,
+        )
     incomplete = _incomplete_release_snapshot(task, download_root)
     if incomplete:
         print("HMG_SNAPSHOT_INCOMPLETE " + "; ".join(incomplete), flush=True)
-        _complete_release_snapshot(task, download_root)
-        incomplete = _incomplete_release_snapshot(task, download_root)
+        if offline_source_dir is None:
+            _complete_release_snapshot(task, download_root)
+            incomplete = _incomplete_release_snapshot(task, download_root)
         if incomplete:
             raise RuntimeError(
-                "Downloaded benchmark snapshot is incomplete: " + "; ".join(incomplete)
+                "Benchmark snapshot is incomplete: " + "; ".join(incomplete)
             )
     for index, repo_id in enumerate(repo_ids):
         source = download_root / "datasets" / task / f"shard_{index:03d}"
@@ -550,6 +558,11 @@ def parse_args(argv=None) -> argparse.Namespace:
         default=Path("~/.cache/humanoidmimicgen/policy_data"),
         help="download/preparation cache (default: %(default)s)",
     )
+    parser.add_argument(
+        "--offline-source-dir",
+        type=Path,
+        help="transferred snapshot root containing datasets/<task>/shard_000..007; never contact the Hub",
+    )
     parser.add_argument("--job-name")
     parser.add_argument("--steps", type=int, default=20_000)
     parser.add_argument("--batch-size", type=int, default=16)
@@ -704,13 +717,19 @@ def main(argv=None) -> None:
             flush=True,
         )
     else:
-        dataset_root, _MULTI_REPO_IDS = prepare_released_task(args.task, args.data_dir)
+        dataset_root, _MULTI_REPO_IDS = prepare_released_task(
+            args.task, args.data_dir, args.offline_source_dir
+        )
 
     print(
         "HMG_DATASETS "
         + json.dumps(
             {
-                "source": DATASET_REPOSITORY,
+                "source": (
+                    str(args.offline_source_dir.expanduser().resolve())
+                    if args.offline_source_dir is not None
+                    else DATASET_REPOSITORY
+                ),
                 "revision": DATASET_REVISION,
                 "task": args.task,
                 "prepared_root": str(dataset_root),
