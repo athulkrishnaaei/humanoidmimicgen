@@ -7,6 +7,10 @@ This fork trains separate Diffusion Policies for two Unitree G1 MuJoCo tasks:
 | Push Shelf Forward | `04_push_shelf_forward` | Push a shelving cart into a marked target zone. |
 | Box Table to Shelf | `07_box_table_to_shelf` | Transfer a box from a table into a shelf. |
 
+The [initial skill rule matrix](docs/safety/initial_skill_rules.md) records
+candidate HAZOP-derived monitoring rules and the sensor/model evidence each
+would need. It does not alter the training policies.
+
 The upstream [HumanoidMimicGen repository](https://github.com/NVlabs/humanoidmimicgen)
 contains the MuJoCo scenes, robot model, whole-body controller integration, and
 training code. It does **not** contain the training demonstrations or a released

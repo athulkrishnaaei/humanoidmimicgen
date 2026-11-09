@@ -18,6 +18,8 @@
 
 For this fork's two initial skills and offline AWS training workflow, see
 [INITIAL_SKILLS.md](INITIAL_SKILLS.md).
+For the proposed HAZOP-derived monitoring rules and evidence needs, see
+[the initial skill rule matrix](docs/safety/initial_skill_rules.md).
 To download the task data in Google Colab, open
 [the Colab notebook](https://colab.research.google.com/github/athulkrishnaaei/humanoidmimicgen/blob/main/notebooks/download_initial_skills_colab.ipynb).
 
