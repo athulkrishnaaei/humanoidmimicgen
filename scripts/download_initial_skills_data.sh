@@ -15,7 +15,9 @@ for skill in "${tasks[@]}"; do
   hf download linkenv/humanoidmimicgen-g1-benchmark \
     --repo-type dataset \
     --revision acf6b53853dd0199bf852286ca68067cc37472ff \
-    --include "datasets/$skill/**" \
+    --include "datasets/$skill/shard_*/meta/**" \
+    --include "datasets/$skill/shard_*/data/**" \
+    --include "datasets/$skill/shard_*/videos/**/observation.images.ego_view/**" \
     --local-dir "$destination"
   python3 scripts/verify_initial_skills_data.py "$destination" --task "$skill"
 done

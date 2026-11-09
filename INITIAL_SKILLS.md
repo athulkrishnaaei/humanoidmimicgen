@@ -56,6 +56,9 @@ bash scripts/download_initial_skills_data.sh /data/hmg-initial-skills 07_box_tab
 
 The downloader pins the benchmark dataset revision and verifies all eight
 shards, their metadata, per-episode Parquet files, and ego-camera videos.
+It omits four additional camera views that this policy trainer does not use.
+At the pinned revision, Push Shelf Forward's required files total 6.853 GB
+(6.382 GiB); its complete five-view task directory totals 19.939 GB.
 Transfer `/data/hmg-initial-skills` through a company-approved storage route,
 such as an S3 bucket your organization permits. For example:
 
