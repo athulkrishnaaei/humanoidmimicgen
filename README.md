@@ -18,6 +18,8 @@
 
 For this fork's two initial skills and offline AWS training workflow, see
 [INITIAL_SKILLS.md](INITIAL_SKILLS.md).
+To download the task data in Google Colab, open
+[the Colab notebook](https://colab.research.google.com/github/athulkrishnaaei/humanoidmimicgen/blob/main/notebooks/download_initial_skills_colab.ipynb).
 
 HumanoidMimicGen generates humanoid
 loco-manipulation data by adapting contact-rich whole-body skills from source

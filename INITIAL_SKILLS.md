@@ -32,6 +32,11 @@ there. AWS instance charges and storage charges depend on your account and regio
 
 ## Get the dataset to AWS without Hugging Face access there
 
+You can use the [Google Colab download notebook](https://colab.research.google.com/github/athulkrishnaaei/humanoidmimicgen/blob/main/notebooks/download_initial_skills_colab.ipynb)
+to save verified task archives to Google Drive, then transfer those archives
+through a company-approved route. The notebook includes extraction and
+checksum commands for AWS.
+
 On a machine where downloading from Hugging Face is allowed and enough disk is
 available, clone this fork and run:
 
